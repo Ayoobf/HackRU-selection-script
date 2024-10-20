@@ -13,37 +13,38 @@ def connect_to_db():
     return db
 
 
+def get_all_prizes(db):
+    """Retrieve all available prize IDs from the database."""
+    points_collection = db["f24-points-syst"]
+    return points_collection.distinct("buy_ins.prize_id")
+
+
 def choose_winner(prize_id, db):
-    
     points_collection = db["f24-points-syst"]
     users_collection = db["users"]
-    
+
     # Aggregate users and their buy-ins for the specific prize
     pipeline = [
         {"$unwind": "$buy_ins"},
         {"$match": {"buy_ins.prize_id": prize_id}},
-        {"$project": {
-            "email": 1,
-            "buy_in": "$buy_ins.buy_in"
-        }},
+        {"$project": {"email": 1, "buy_in": "$buy_ins.buy_in"}},
     ]
 
     users = list(points_collection.aggregate(pipeline=pipeline))
     if not users:
         return None
 
-    total_buy_ins = sum(user['buy_in'] for user in users)
+    total_buy_ins = sum(user["buy_in"] for user in users)
 
-    # generate wining number between 0 and total_buy_ins
+    # Generate winning number between 0 and total_buy_ins
     winning_ticket = random.uniform(0, total_buy_ins)
 
-    # find the winner
+    # Find the winner
     cumulative_sum = 0
     for user_p in users:
         cumulative_sum += user_p["buy_in"]
-        
-        if cumulative_sum > winning_ticket:
 
+        if cumulative_sum > winning_ticket:
             user = users_collection.find_one({"email": user_p["email"]})
             if user:
                 return {**user_p, **user}
@@ -59,19 +60,32 @@ def main():
     parser = argparse.ArgumentParser(
         description="Choose a winner for a prize based on buy-ins."
     )
+    # -all command arg
+    parser.add_argument(
+        "-all", action="store_true", help="Select winners for all available prizes."
+    )
+    # prize input arg
     parser.add_argument(
         "prizes",
         metavar="prize",
         type=str,
-        nargs="+",
+        nargs="*",
         help="List of prize IDs to select winners for.",
     )
 
     args = parser.parse_args()
-    prizes = args.prizes
-
-    # Connect to database
+    
     db = connect_to_db()
+    
+    # get prize list
+    if not args.prizes:
+        # If no prizes are provided, retrieve all prizes by default
+        prizes = get_all_prizes(db)
+        if not prizes:
+            print("No available prizes found.")
+            return
+    else:
+        prizes = args.prizes
 
     # Select winners for each prize
     for prize_id in prizes:
@@ -90,7 +104,7 @@ def main():
         else:
             print(f"No participants found for {prize_id}")
             print()
-            
-            
+
+
 if __name__ == "__main__":
     main()

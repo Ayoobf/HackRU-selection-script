@@ -30,7 +30,13 @@ Time and space complexity are both O(n).
 
 3. Run the script with one of the following options:
 
-   - **To choose winners for specific prizes**:
+    - **To choose winners for all prizes**:
+
+    ```bash
+    python winner.py
+    ```
+
+    - **To choose winners for specific prizes**:
 
      ```bash
      python winner.py prizeA 
