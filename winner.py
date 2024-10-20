@@ -20,6 +20,7 @@ def get_all_prizes(db):
 
 
 def choose_winner(prize_id, db):
+    """Chooses a winner via a prize_id"""
     points_collection = db["f24-points-syst"]
     users_collection = db["users"]
 
