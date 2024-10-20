@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from winner import connect_to_db, get_all_prizes, choose_winner, main
+from winner import connect_to_db, get_all_prizes, choose_winner
 import os
 
 
