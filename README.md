@@ -42,7 +42,7 @@ Time and space complexity are both O(n).
      python winner.py prizeA 
      ```
 
-     or
+    or
 
      ```bash
      python winner.py prizeA prizeB prizeC
