@@ -17,33 +17,44 @@ Time and space complexity are both O(n).
 
 ## Setup
 
-1. Install dependencies:
+1. **Install the package:**
+
+   You can install the package directly using pip from the local directory:
+
+   ```bash
+   pip install .
+   ```
+
+   Alternatively, if you prefer to install the dependencies separately, run:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-2. Create a `.env` file with the following fields:
+2. **Create a `.env` file** with the following fields:
 
    - `MONGO_URI`: Your MongoDB connection string.
    - `DB_NAME`: The name of the database that contains the collections.
 
-3. Run the script with one of the following options:
+## Usage
 
-    - **To choose winners for all prizes**:
+Run the script using the `winner` command, which is now available as a console script:
 
-    ```bash
-    python winner.py
-    ```
+- **To choose winners for all prizes:**
 
-    - **To choose winners for specific prizes**:
+   ```bash
+   winner
+   ```
 
-     ```bash
-     python winner.py prizeA 
-     ```
+- **To choose winners for specific prizes:**
 
-    or
+   ```bash
+   winner prizeA 
+   ```
 
-     ```bash
-     python winner.py prizeA prizeB prizeC
-     ```
+   or
+
+   ```bash
+   winner prizeA prizeB prizeC
+   ```
+   
