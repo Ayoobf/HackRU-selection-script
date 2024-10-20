@@ -1,3 +1,4 @@
+import argparse
 import pymongo
 import random
 import os
@@ -5,14 +6,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Connect to MongoDB
-client = pymongo.MongoClient(os.getenv('MONGO_URI'))
-db = client[os.getenv('DB_NAME')]
-users_collection = db["users"] 
-points_collection = db["f24-points-syst"]
+def connect_to_db():
+    """Connect to MongoDB using environment variables."""
+    client = pymongo.MongoClient(os.getenv("MONGO_URI"))
+    db = client[os.getenv("DB_NAME")]
+    return db
 
 
-def choose_winner(prize_id):
+def choose_winner(prize_id, db):
+    
+    points_collection = db["f24-points-syst"]
+    users_collection = db["users"]
+    
     # Aggregate users and their buy-ins for the specific prize
     pipeline = [
         {"$unwind": "$buy_ins"},
@@ -49,21 +54,43 @@ def choose_winner(prize_id):
     return users[-1]
 
 
-prizes = ["prizeA", "prizeB", "prizeC"]
+def main():
+    # Argument parsing for CLI input
+    parser = argparse.ArgumentParser(
+        description="Choose a winner for a prize based on buy-ins."
+    )
+    parser.add_argument(
+        "prizes",
+        metavar="prize",
+        type=str,
+        nargs="+",
+        help="List of prize IDs to select winners for.",
+    )
 
-for prize_id in prizes:
-    winner = choose_winner(prize_id)
-    if winner:
-        print(f"The winner of {prize_id} is:")
-        print(f"  Email: {winner['email']}")
-        print(
-            f"  Name: {winner.get('first_name', 'N/A')} {winner.get('last_name', 'N/A')}"
-        )
-        print(f"  School: {winner.get('school', 'N/A')}")
-        print(f"  Major: {winner.get('major', 'N/A')}")
-        print(f"  Registration Status: {winner.get('registration_status', 'N/A')}")
-        print(f"  Buy-in: {winner['buy_in']}")
-        print()
-    else:
-        print(f"No participants found for {prize_id}")
-        print()
+    args = parser.parse_args()
+    prizes = args.prizes
+
+    # Connect to database
+    db = connect_to_db()
+
+    # Select winners for each prize
+    for prize_id in prizes:
+        winner = choose_winner(prize_id, db)
+        if winner:
+            print(f"The winner of {prize_id} is:")
+            print(f"  Email: {winner['email']}")
+            print(
+                f"  Name: {winner.get('first_name', 'N/A')} {winner.get('last_name', 'N/A')}"
+            )
+            print(f"  School: {winner.get('school', 'N/A')}")
+            print(f"  Major: {winner.get('major', 'N/A')}")
+            print(f"  Registration Status: {winner.get('registration_status', 'N/A')}")
+            print(f"  Buy-in: {winner['buy_in']}")
+            print()
+        else:
+            print(f"No participants found for {prize_id}")
+            print()
+            
+            
+if __name__ == "__main__":
+    main()

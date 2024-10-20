@@ -13,15 +13,31 @@ This script chooses a winner from the f24-points-syst collection.
 
 #### Complexity
 
-Time and space complexity are both O(n)
+Time and space complexity are both O(n).
 
 ## Setup
 
-1. Install dependencies
+1. Install dependencies:
 
-```python
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-2. Create a `.env` file with `MONGO_URI` and `DB_NAME` fields
-3. Run the script `python winner.py`
+2. Create a `.env` file with the following fields:
+
+   - `MONGO_URI`: Your MongoDB connection string.
+   - `DB_NAME`: The name of the database that contains the collections.
+
+3. Run the script with one of the following options:
+
+   - **To choose winners for specific prizes**:
+
+     ```bash
+     python winner.py prizeA 
+     ```
+
+     or
+
+     ```bash
+     python winner.py prizeA prizeB prizeC
+     ```
