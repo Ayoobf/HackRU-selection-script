@@ -45,7 +45,7 @@ def choose_winner(prize_id, db):
     for user_p in users:
         cumulative_sum += user_p["buy_in"]
 
-        if cumulative_sum > winning_ticket:
+        if cumulative_sum >= winning_ticket:
             user = users_collection.find_one({"email": user_p["email"]})
             if user:
                 return {**user_p, **user}
@@ -95,7 +95,10 @@ def main():
             print(f"The winner of {prize_id} is:")
             print(f"  Email: {winner['email']}")
             print(
-                f"  Name: {winner.get('first_name', 'N/A')} {winner.get('last_name', 'N/A')}"
+                f"  First Name: {winner.get('first_name', 'N/A')}"
+            )
+            print(
+                f"  Last Name: {winner.get('last_name', 'N/A')}"
             )
             print(f"  School: {winner.get('school', 'N/A')}")
             print(f"  Major: {winner.get('major', 'N/A')}")
